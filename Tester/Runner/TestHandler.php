@@ -24,10 +24,42 @@ class TestHandler
 	/** @var Runner */
 	private $runner;
 
+	/** @var string[] */
+	private $lockNames = array();
+
+	/** @var bool[] */
+	private $locks = array();
+
 
 	public function __construct(Runner $runner)
 	{
 		$this->runner = $runner;
+	}
+
+
+	/**
+	 * @return bool  FALSE means cannot be locked now
+	 */
+	public function lockJob(Job $job)
+	{
+		$file = $job->getFile();
+		if (!isset($this->lockNames[$file])) {
+			return TRUE;
+		}
+
+		$canLock = TRUE;
+		foreach ($this->lockNames[$file] as $name) {
+			if (array_key_exists($name, $this->locks)) {
+				$canLock = FALSE;
+				break;
+			}
+		}
+
+		if ($canLock) {
+			$this->locks = array_merge($this->locks, array_fill_keys($this->lockNames[$file], TRUE));
+		}
+
+		return $canLock;
 	}
 
 
@@ -160,6 +192,16 @@ class TestHandler
 	}
 
 
+	private function initiateLock($name, PhpExecutable $php, $file)
+	{
+		if (!strlen($name)) {
+			return array(Runner::FAILED, "Missing @lock name in file '$file'.");
+		}
+
+		$this->lockNames[$file][] = $name;
+	}
+
+
 	private function assessExitCode(Job $job, $code)
 	{
 		$code = (int) $code;
@@ -204,6 +246,17 @@ class TestHandler
 			Dumper::saveOutput($job->getFile(), $job->getOutput(), '.actual');
 			Dumper::saveOutput($job->getFile(), $content, '.expected');
 			return array(Runner::FAILED, 'Failed: output should match ' . Dumper::toLine(rtrim($content)));
+		}
+	}
+
+
+	private function assessLock(Job $job)
+	{
+		$file = $job->getFile();
+		if (isset($this->lockNames[$file])) {
+			foreach ($this->lockNames[$file] as $name) {
+				unset($this->locks[$name]);
+			}
 		}
 	}
 

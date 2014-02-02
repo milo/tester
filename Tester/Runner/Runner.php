@@ -76,8 +76,18 @@ class Runner
 
 		$this->installInterruptHandler();
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
-			for ($i = count($running); $this->jobs && $i < $this->threadCount; $i++) {
-				$running[] = $job = array_shift($this->jobs);
+			$postponedCount = 0;
+			for ($i = count($running); $this->jobs && $i < $this->threadCount && $postponedCount < count($this->jobs); $i++) {
+				$job = array_shift($this->jobs);
+
+				if (!$this->testHandler->lockJob($job)) {
+					$i--;
+					$this->jobs[] = $job;
+					$postponedCount++;
+					continue;
+				}
+
+				$running[] = $job;
 				$job->run($this->threadCount <= 1 || (count($running) + count($this->jobs) <= 1));
 			}
 
