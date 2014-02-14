@@ -36,6 +36,9 @@ class Job
 	/** @var string  test output */
 	private $output;
 
+	/** @var string  test error output */
+	private $errorOutput;
+
 	/** @var string  output headers in raw format */
 	private $headers;
 
@@ -47,6 +50,9 @@ class Job
 
 	/** @var resource */
 	private $stdout;
+
+	/** @var resource */
+	private $stderr;
 
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
@@ -85,15 +91,15 @@ class Job
 			NULL,
 			array('bypass_shell' => TRUE)
 		);
-		list($stdin, $this->stdout, $stderr) = $pipes;
+		list($stdin, $this->stdout, $this->stderr) = $pipes;
 		fclose($stdin);
-		fclose($stderr);
 		if ($blocking) {
 			while ($this->isRunning()) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 		} else {
 			stream_set_blocking($this->stdout, 0);
+			stream_set_blocking($this->stderr, 0);
 		}
 	}
 
@@ -109,12 +115,14 @@ class Job
 		}
 
 		$this->output .= stream_get_contents($this->stdout);
+		$this->errorOutput .= stream_get_contents($this->stderr);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			return TRUE;
 		}
 
 		fclose($this->stdout);
+		fclose($this->stderr);
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
@@ -168,6 +176,16 @@ class Job
 	public function getOutput()
 	{
 		return $this->output;
+	}
+
+
+	/**
+	 * Returns test error output.
+	 * @return string
+	 */
+	public function getErrorOutput()
+	{
+		return $this->errorOutput;
 	}
 
 
