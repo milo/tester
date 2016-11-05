@@ -3,6 +3,7 @@
 use Tester\Assert;
 use Tester\Dumper;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
@@ -36,7 +37,7 @@ Assert::match(
 	"TestCase in file '%a%testcase-no-methods.phptx' does not contain test methods.",
 	$logger->results['testcase-no-methods.phptx'][1]
 );
-Assert::same(Runner::SKIPPED, $logger->results['testcase-no-methods.phptx'][0]);
+Assert::same(Test::SKIPPED, $logger->results['testcase-no-methods.phptx'][0]);
 
 
 $bug62725 = PHP_SAPI === 'cli' && PHP_VERSION_ID <= 50406;
@@ -47,21 +48,21 @@ Assert::match(
 		: 'Error: This test forgets to execute an assertion.',
 	trim($logger->results['testcase-not-call-run.phptx'][1])
 );
-Assert::same(Runner::FAILED, $logger->results['testcase-not-call-run.phptx'][0]);
+Assert::same(Test::FAILED, $logger->results['testcase-not-call-run.phptx'][0]);
 
 
 Assert::match(
 	"Skipped:\npre-skip",
 	trim($logger->results['testcase-pre-skip.phptx'][1])
 );
-Assert::same(Runner::SKIPPED, $logger->results['testcase-pre-skip.phptx'][0]);
+Assert::same(Test::SKIPPED, $logger->results['testcase-pre-skip.phptx'][0]);
 
 
 Assert::match(
 	"Failed: pre-fail\n%A%",
 	trim(Dumper::removeColors($logger->results['testcase-pre-fail.phptx'][1]))
 );
-Assert::same(Runner::FAILED, $logger->results['testcase-pre-fail.phptx'][0]);
+Assert::same(Test::FAILED, $logger->results['testcase-pre-fail.phptx'][0]);
 
 
 Assert::match(
@@ -73,7 +74,7 @@ Assert::match(
 		),
 	trim($logger->results['testcase-syntax-error.phptx'][1])
 );
-Assert::same(Runner::FAILED, $logger->results['testcase-syntax-error.phptx'][0]);
+Assert::same(Test::FAILED, $logger->results['testcase-syntax-error.phptx'][0]);
 
 
 Assert::same(5, count($logger->results));

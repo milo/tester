@@ -2,6 +2,7 @@
 
 use Tester\Assert;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
@@ -37,9 +38,9 @@ test(function () use ($interpreter) {
 
 	Assert::notSame(0, $runner->run());
 	Assert::same([
-		[Runner::FAILED, 'init-fail.phptx'],
-		[Runner::FAILED, 'runtime-fail.phptx'],
-		[Runner::PASSED, 'pass.phptx'],
+		[Test::FAILED, 'init-fail.phptx'],
+		[Test::FAILED, 'runtime-fail.phptx'],
+		[Test::PASSED, 'pass.phptx'],
 	], $logger->results);
 });
 
@@ -56,7 +57,7 @@ test(function () use ($interpreter) {
 
 	Assert::notSame(0, $runner->run());
 	Assert::same([
-		[Runner::FAILED, 'init-fail.phptx'],
+		[Test::FAILED, 'init-fail.phptx'],
 	], $logger->results);
 });
 
@@ -73,6 +74,6 @@ test(function () use ($interpreter) {
 
 	Assert::notSame(0, $runner->run());
 	Assert::same([
-		[Runner::FAILED, 'runtime-fail.phptx'],
+		[Test::FAILED, 'runtime-fail.phptx'],
 	], $logger->results);
 });

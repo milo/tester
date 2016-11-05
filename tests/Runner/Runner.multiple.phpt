@@ -2,6 +2,7 @@
 
 use Tester\Assert;
 use Tester\Helpers;
+use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
@@ -22,14 +23,14 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 		$jobs = new ReflectionProperty($runner, 'jobs');
 		$jobs->setAccessible(TRUE);
 
-		$results->setValue($runner, [$runner::PASSED => 0, $runner::SKIPPED => 0, $runner::FAILED => 0]);
+		$results->setValue($runner, [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0]);
 		$findTests->invokeArgs($runner, [__DIR__ . '/multiple/*.phptx']);
 		return $jobs->getValue($runner);
 	});
 
 } else {
 	$tests = Assert::with($runner, function () {
-		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
+		$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
 		$this->findTests(__DIR__ . '/multiple/*.phptx');
 		return $this->jobs;
 	});
@@ -37,7 +38,7 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 
 
 foreach ($tests as $i => $job) {
-	$tests[$i] = [basename($job->getFile()), $job->getArguments()];
+	$tests[$i] = [basename($job->getTest()->getFile()), $job->getTest()->getJobArguments()];
 }
 sort($tests);
 

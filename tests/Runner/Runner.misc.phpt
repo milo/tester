@@ -2,6 +2,7 @@
 
 use Tester\Assert;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
@@ -32,4 +33,4 @@ $runner->run();
 
 Assert::false(getenv('TesterEnvVar'));
 
-Assert::same(Runner::PASSED, $logger->results['env-vars.phptx']);
+Assert::same(Test::PASSED, $logger->results['env-vars.phptx']);

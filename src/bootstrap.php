@@ -14,6 +14,7 @@ require __DIR__ . '/Framework/FileMock.php';
 require __DIR__ . '/Framework/TestCase.php';
 require __DIR__ . '/Framework/DomQuery.php';
 require __DIR__ . '/CodeCoverage/Collector.php';
+require __DIR__ . '/Runner/Test.php';
 require __DIR__ . '/Runner/Job.php';
 
 Tester\Environment::setup();
