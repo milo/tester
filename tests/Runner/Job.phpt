@@ -13,8 +13,8 @@ test(function () {
 	$job->run($job::RUN_COLLECT_ERRORS);
 
 	Assert::false($job->isRunning());
-//	Assert::same($file, $job->getTest()->getFile());  # TODO: tohle do testu Test
-//	Assert::same($args, $job->getTest()->getArguments());
+//Assert::same($file, $job->getTest()->getFile());  # TODO: tohle do testu Test
+//Assert::same($args, $job->getTest()->getArguments());
 	Assert::same(231, $job->getExitCode());
 
 	if (defined('PHPDBG_VERSION') && PHP_VERSION_ID === 70000) { // bug #71056

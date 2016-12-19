@@ -78,9 +78,9 @@ class TestHandler
 	{
 		$test = $job->getTest();
 		list($annotations, $testName) = $this->getAnnotations($test->getFile());
-//		$testName .= /*$job->getArguments()*/ [] # TODO
-//			? ' [' . implode(' ', preg_replace(['#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'], ['$1', '$1...'], /*$job->getArguments()*/[])) . ']' # TODO
-//			: '';
+//$testName .= /*$job->getArguments()*/ [] # TODO
+//? ' [' . implode(' ', preg_replace(['#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'], ['$1', '$1...'], /*$job->getArguments()*/[])) . ']' # TODO
+//: '';
 		$annotations += [
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,

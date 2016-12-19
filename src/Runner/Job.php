@@ -203,25 +203,25 @@ class Job
 	}
 
 
-# TODO
-//	/**
-//	 * Returns test output.
-//	 * @return string
-//	 */
-//	public function getOutput()
-//	{
-//		return $this->output;
-//	}
-//
-//
-//	/**
-//	 * Returns test error output.
-//	 * @return string|NULL
-//	 */
-//	public function getErrorOutput()
-//	{
-//		return $this->errorOutput;
-//	}
+//# TODO
+///**
+// * Returns test output.
+// * @return string
+// */
+//public function getOutput()
+//{
+//return $this->output;
+//}
+
+
+/**
+ * Returns test error output.
+ * @return string|NULL
+ */
+//public function getErrorOutput()
+//{
+//return $this->errorOutput;
+//}
 
 
 	/**
