@@ -184,7 +184,7 @@ class Runner
 	{
 		$this->results[$test->getResult()]++;
 		foreach ($this->outputHandlers as $handler) {
-			$handler->result($test->title, $test->getResult(), $test->message);
+			$handler->result(clone $test);
 		}
 
 		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {
