@@ -86,16 +86,23 @@ class Runner
 	{
 		$this->interrupted = FALSE;
 
-		foreach ($this->outputHandlers as $handler) {
-			$handler->begin();
-		}
-
 		$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
 		$this->jobs = $running = [];
+		$tests = [];
 		foreach ($this->paths as $path) {
-			$this->findTests($path);
+			$tests = array_merge($tests, $this->findTests($path));
 		}
-		$this->jobCount = count($this->jobs) + array_sum($this->results);
+		$this->jobCount = count($tests);
+
+		foreach ($this->outputHandlers as $handler) {
+			$handler->begin($tests);
+		}
+
+		foreach ($tests as $test) {
+			if ($test->hasResult()) {
+				$this->writeResult($test);
+			}
+		}
 
 		$threads = range(1, $this->threadCount);
 
@@ -134,7 +141,7 @@ class Runner
 
 
 	/**
-	 * @return void
+	 * @return Test[]
 	 */
 	private function findTests($path)
 	{
@@ -142,17 +149,20 @@ class Runner
 			throw new \InvalidArgumentException("File or directory '$path' not found.");
 		}
 
+		$tests = [];
 		if (is_dir($path)) {
 			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
-				$this->findTests($dir);
+				$tests = array_merge($tests, $this->findTests($dir));
 			}
 			$path .= '/*.' . self::TEST_FILE_EXTENSION;
 		}
 		foreach (glob(str_replace('[', '[[]', $path)) ?: [] as $file) {
 			if (is_file($file)) {
-				$this->testHandler->initiate(realpath($file));
+				$tests = array_merge($tests, $this->testHandler->initiate(realpath($file)));
 			}
 		}
+
+		return $tests;
 	}
 
 

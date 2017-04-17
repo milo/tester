@@ -31,7 +31,7 @@ class TestHandler
 
 	/**
 	 * @param  string
-	 * @return void
+	 * @return Test[]
 	 */
 	public function initiate($file)
 	{
@@ -53,11 +53,7 @@ class TestHandler
 						$tmp[] = $test;
 					} else {
 						foreach (is_array($res) ? $res : [$res] as $testVariant) {
-							if ($testVariant->hasResult()) {
-								$this->runner->writeResult($testVariant);
-							} else {
-								$tmp[] = $testVariant;
-							}
+							$tmp[] = $testVariant;
 						}
 					}
 				}
@@ -66,8 +62,12 @@ class TestHandler
 		}
 
 		foreach ($tests as $test) {
-			$this->runner->addJob(new Job($test, $php, $this->runner->getEnvironmentVariables()));
+			if (!$test->hasResult()) {
+				$this->runner->addJob(new Job($test, $php, $this->runner->getEnvironmentVariables()));
+			}
 		}
+
+		return $tests;
 	}
 
 

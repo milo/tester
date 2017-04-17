@@ -31,7 +31,7 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $tests)
 	{
 		fwrite($this->file, "TAP version 13\n");
 	}

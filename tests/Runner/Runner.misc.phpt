@@ -19,7 +19,7 @@ class Logger implements Tester\Runner\OutputHandler
 		$this->results[basename($test->getFile())] = $test->getResult();
 	}
 
-	function begin() {}
+	function begin(array $tests) {}
 	function end() {}
 }
 

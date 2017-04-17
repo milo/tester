@@ -38,7 +38,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $tests)
 	{
 		$this->time = -microtime(TRUE);
 		echo $this->runner->getInterpreter()->getShortInfo()

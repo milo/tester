@@ -16,7 +16,7 @@ use Tester;
 interface OutputHandler
 {
 
-	function begin();
+	function begin(array $tests);
 
 	function result(Test $test);
 
