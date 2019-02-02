@@ -16,6 +16,7 @@ namespace Tester\CodeCoverage;
 class Collector
 {
 	public const
+		ENGINE_PCOV = 'PCOV',
 		ENGINE_PHPDBG = 'PHPDBG',
 		ENGINE_XDEBUG = 'Xdebug';
 
@@ -29,6 +30,10 @@ class Collector
 	public static function detectEngines(): array
 	{
 		$engines = [];
+		if (extension_loaded('pcov')) {
+			$engines[] = self::ENGINE_PCOV;
+		}
+
 		if (defined('PHPDBG_VERSION')) {
 			$engines[] = self::ENGINE_PHPDBG;
 		}
@@ -59,6 +64,11 @@ class Collector
 		self::$file = fopen($file, 'c+');
 
 		switch ($engine) {
+			case self::ENGINE_PCOV:
+				\pcov\start();
+				self::$collector = 'collectPCOV';
+				break;
+
 			case self::ENGINE_PHPDBG:
 				phpdbg_start_oplog();
 				self::$collector = 'collectPhpDbg';
@@ -112,6 +122,33 @@ class Collector
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
 		flock(self::$file, LOCK_UN);
+	}
+
+
+	/**
+	 * Collects information about code coverage.
+	 */
+	private static function collectPCOV(): array
+	{
+		$positive = $negative = [];
+
+		\pcov\stop();
+
+		foreach (\pcov\collect() as $file => $lines) {
+			if (!file_exists($file)) {
+				continue;
+			}
+
+			foreach ($lines as $num => $val) {
+				if ($val > 0) {
+					$positive[$file][$num] = $val;
+				} else {
+					$negative[$file][$num] = $val;
+				}
+			}
+		}
+
+		return [$positive, $negative];
 	}
 
 

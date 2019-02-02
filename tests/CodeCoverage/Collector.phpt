@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $engines = CodeCoverage\Collector::detectEngines();
 if (count($engines) < 1) {
-	Tester\Environment::skip('Requires Xdebug or phpdbg SAPI.');
+	Tester\Environment::skip('Requires Xdebug, PCOV or PHPDB SAPI.');
 }
 $engine = reset($engines);
 

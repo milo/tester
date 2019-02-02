@@ -73,6 +73,12 @@ class Runner
 	}
 
 
+	public function addIniOption(string $name, string $value): void
+	{
+		$this->interpreter = $this->interpreter->withPhpIniOption($name, $value);
+	}
+
+
 	public function setTempDirectory(?string $path): void
 	{
 		if ($path !== null) {
