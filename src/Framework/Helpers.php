@@ -37,6 +37,40 @@ class Helpers
 
 
 	/**
+	 * Find common directory for given files.
+	 * @return string  Empty when not found. Slash and back slash chars normalized to DIRECTORY_SEPARATOR.
+	 */
+	public static function findCommonDirectory(array $files): string
+	{
+		if (count($files) < 1) {
+			return '';
+		}
+
+		$files = array_map(function (string $file): string {
+			return preg_replace('#[\\\\//]+#', '/', $file);
+		}, $files);
+
+		$path = reset($files);
+		$parts = explode('/', $path);
+		while (count($parts)) {
+			foreach ($files as $file) {
+				if (strpos($file, $path . '/') !== 0) {
+					array_pop($parts);
+					$path = implode('/', $parts);
+					continue 2;
+				}
+			}
+			if ($path === '') {  // edge case - UNIX root '/'
+				$parts[] = '';
+			}
+			break;
+		}
+
+		return implode(DIRECTORY_SEPARATOR, $parts);
+	}
+
+
+	/**
 	 * Parse phpDoc comment.
 	 * @internal
 	 */
